@@ -116,9 +116,15 @@ public:
 			}
 		}
 		else{
-			if (find(final.begin(),final.end() ,state)!= final.end() && iterator == s.size()-1)
+			if (iterator == s.size()-1)
 			{
-				return true;
+				if (find(final.begin(),final.end() ,state)!= final.end())
+				{
+					return false;	
+				}
+				else{
+					return true;
+				}
 			}
 			else{
 				for (int j = 0; j <aristas[state].size() ; ++j) //buscar entre las aristas del nodo inicial
