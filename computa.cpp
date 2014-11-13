@@ -52,6 +52,7 @@ public:
 	vector <vector<arista> > aristas;
 	vector <int> inicial;
 	vector <int> final;
+	vector<char> lenguaje;
 	vector <node> nodos;
 public:
 	grafo(){
@@ -66,8 +67,18 @@ public:
 		for (int i = 0; i < y; ++i)
 		{
 			cin>>x>>z>>s;
-			aristas[x][z].colocar(s);	
+			aristas[x][z].colocar(s);
+			if (find(lenguaje.begin(),lenguaje.end(),s)==lenguaje.end())
+			{
+				lenguaje.push_back(s);
+			}
 		}
+		cout<<"lenguaje"<<endl;
+		for (int i = 0; i < lenguaje.size(); ++i)
+		{
+			cout<<lenguaje[i];
+		}
+		cout<<endl;
 		cin>>x>>y;
 		for (int i = 0; i < x; ++i)
 		{
@@ -83,6 +94,7 @@ public:
 	void addarista(int x, int y, char valor){
 		aristas[x][y].colocar(valor);
 	}
+
 	void print(){
 		for (int i = 0; i < aristas.size(); ++i)
 		{
@@ -157,7 +169,7 @@ int main(int argc, char const *argv[])
 {
 	grafo g;
 	g.print();
-	cout<<"miow"<<endl;
+	// cout<<"miow"<<endl;
 	string s;
 	cin >> s;
 	if (g.acepta(s))
