@@ -122,17 +122,16 @@ public:
 				{
 					for (int k = 0; k < aristas[state][j].valor.size(); ++k) //busca entre la arista, las posibles sub aristas a probar
 					{
-						if (aristas[state][j].valor[k]==s[iterator] || aristas[state][j].valor[k]=='#') //una arista cumple la condicion, entonces tira un proceso alli
+						if (aristas[state][j].valor[k]==s[iterator]) //una arista cumple la condicion, entonces tira un proceso alli
 						{
 							int m=iterator+1;
-							if(acepta(s,iterator=m,state=j,init=false))
-								return true;
-							if (find(final.begin(),final.end() ,j)!=final.end())
+							cout<<iterator<<" "<<s.size()<<" "<<j<<" "<< endl;
+							if (find(final.begin(),final.end() ,j)!=final.end() && iterator==s.size()-1)
 							{
-								if (iterator==s.size()-1)
-								{
-									return true;
-								}
+								return true;
+							}
+							else if(acepta(s,iterator=m,state=j,init=false)){
+								return true;
 							}
 						}
 						else if(aristas[state][j].valor[k]=='#')
@@ -146,6 +145,7 @@ public:
 			}
 		}
 		else{
+			cout<<iterator<<" "<<s.size()<<" "<< endl;
 			if (iterator == s.size()-1)
 			{
 				if (find(final.begin(),final.end() ,state)!= final.end())
