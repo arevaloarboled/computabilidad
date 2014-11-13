@@ -101,7 +101,10 @@ public:
 		{
 			for (int j = 0; j < aristas[i].size(); ++j)
 			{
-				cout<<aristas[i][j].valor[0];
+				for (int k = 0; k < aristas[i][j].valor.size(); ++k)
+				{
+					cout<<aristas[i][j].valor[k]<<" ";	
+				}
 				cout<<"||";
 			}
 			cout<<endl;
@@ -124,6 +127,13 @@ public:
 							int m=iterator+1;
 							if(acepta(s,iterator=m,state=j,init=false))
 								return true;
+							if (find(final.begin(),final.end() ,j)!=final.end())
+							{
+								if (iterator==s.size()-1)
+								{
+									return true;
+								}
+							}
 						}
 						else if(aristas[state][j].valor[k]=='#')
 						{
