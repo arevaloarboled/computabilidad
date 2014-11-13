@@ -59,6 +59,7 @@ public:
 		int x,y,z;
 		char s;
 		cin>>x>>y;
+		nodos.resize(x);
 		aristas.resize(x);
 		for (int i = 0; i < aristas.size(); ++i)
 		{
@@ -68,7 +69,7 @@ public:
 		{
 			cin>>x>>z>>s;
 			aristas[x][z].colocar(s);
-			if (find(lenguaje.begin(),lenguaje.end(),s)==lenguaje.end())
+			if (find(lenguaje.begin(),lenguaje.end(),s)==lenguaje.end() && s!='#')
 			{
 				lenguaje.push_back(s);
 			}
@@ -118,9 +119,16 @@ public:
 				{
 					for (int k = 0; k < aristas[state][j].valor.size(); ++k) //busca entre la arista, las posibles sub aristas a probar
 					{
-						if (aristas[state][j].valor[k]==s[iterator]) //una arista cumple la condicion, entonces tira un proceso alli
+						if (aristas[state][j].valor[k]==s[iterator] || aristas[state][j].valor[k]=='#') //una arista cumple la condicion, entonces tira un proceso alli
 						{
-							if(acepta(s,iterator++,state=j,init=false))
+							int m=iterator+1;
+							if(acepta(s,iterator=m,state=j,init=false))
+								return true;
+						}
+						else if(aristas[state][j].valor[k]=='#')
+						{
+							int m=iterator;
+							if(acepta(s,iterator=m,state=j,init=false))
 								return true;
 						}
 					}
@@ -145,9 +153,17 @@ public:
 					{
 						if (aristas[state][j].valor[k]==s[iterator]) //una arista cumple la condicion, entonces tira un proceso alli
 						{
-							if(acepta(s,iterator++,state=j,init=false))
+							int m=iterator+1;
+							if(acepta(s,iterator=m,state=j,init=false))
 								return true;
 						}
+						else if(aristas[state][j].valor[k]=='#')
+						{
+							int m=iterator;
+							if(acepta(s,iterator=m,state=j,init=false))
+								return true;
+						}
+
 					}
 				}
 			}
