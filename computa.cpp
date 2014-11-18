@@ -118,24 +118,34 @@ public:
 			for (int i = 0; i < inicial.size(); ++i)
 			{
 				state=inicial[i];//escoge uno de los nodos iniciales
+				//cout<<"1"<<endl;
 				for (int j = 0; j <aristas[state].size() ; ++j) //buscar entre las aristas del nodo inicial
 				{
+					//cout<<"2"<<endl;
 					for (int k = 0; k < aristas[state][j].valor.size(); ++k) //busca entre la arista, las posibles sub aristas a probar
 					{
+						//cout<<"3"<<endl;
+						//cout<<iterator<<" "<<s.size()<<" "<<j<<" "<<state<< endl;
 						if (aristas[state][j].valor[k]==s[iterator]) //una arista cumple la condicion, entonces tira un proceso alli
 						{
+							//cout<<"4"<<endl;
 							int m=iterator+1;
-							cout<<iterator<<" "<<s.size()<<" "<<j<<" "<< endl;
-							if (find(final.begin(),final.end() ,j)!=final.end() && iterator==s.size()-1)
+							//cout<<iterator<<" "<<s.size()<<" "<<j<<" "<<" "<<state<< endl;
+							//if (find(final.begin(),final.end() ,j)!=final.end() && m==s.size())
+							//cout<<"iterator: "<<iterator<<endl;
+							if (find(final.begin(),final.end() ,j)!=final.end() && m==s.size())
 							{
 								return true;
 							}
 							else if(acepta(s,iterator=m,state=j,init=false)){
 								return true;
 							}
+							//cout<<"iterator: "<<iterator<<endl;
+							iterator--;
 						}
 						else if(aristas[state][j].valor[k]=='#')
 						{
+							//cout<<"5"<<endl;
 							int m=iterator;
 							if(acepta(s,iterator=m,state=j,init=false))
 								return true;
@@ -145,30 +155,44 @@ public:
 			}
 		}
 		else{
-			cout<<iterator<<" "<<s.size()<<" "<< endl;
-			if (iterator == s.size()-1)
+			//cout<<"6"<<endl;
+			//cout<<iterator<<" "<<s.size()<<" "<<state<< endl;
+			if (iterator == s.size())
 			{
-				if (find(final.begin(),final.end() ,state)!= final.end())
+				//cout<<"7"<<endl;
+				//cout<<"miow"<<" "<<iterator<<" "<<s.size()<<" "<<state<< endl;
+				//std::vector<int>::iterator it=find(final.begin(),final.end() ,state);
+				//cout<<*it<<" "<<state<<endl;
+				//cout<<*final.begin()<<" "<<*final.end()<<endl;
+				if (find(final.begin(),final.end() ,state) == final.end())
 				{
+					//cout<<"8"<<endl;
 					return false;	
 				}
 				else{
+					//cout<<state<<endl;
+					//cout<<"9"<<endl;
 					return true;
 				}
 			}
 			else{
 				for (int j = 0; j <aristas[state].size() ; ++j) //buscar entre las aristas del nodo inicial
 				{
+					//cout<<"10"<<endl;
 					for (int k = 0; k < aristas[state][j].valor.size(); ++k) //busca entre la arista, las posibles sub aristas a probar
 					{
+						//cout<<"11"<<endl;
+						//cout<<iterator<<" "<<s.size()<<" "<<state<< endl;
 						if (aristas[state][j].valor[k]==s[iterator]) //una arista cumple la condicion, entonces tira un proceso alli
 						{
+							//cout<<"12"<<endl;
 							int m=iterator+1;
 							if(acepta(s,iterator=m,state=j,init=false))
 								return true;
 						}
 						else if(aristas[state][j].valor[k]=='#')
 						{
+							//cout<<"13"<<endl;
 							int m=iterator;
 							if(acepta(s,iterator=m,state=j,init=false))
 								return true;
@@ -178,6 +202,7 @@ public:
 				}
 			}
 		}
+		//cout<<"14"<<endl;
 		return false;
 	}
 };
@@ -198,6 +223,7 @@ int main(int argc, char const *argv[])
 	// cout<<"miow"<<endl;
 	string s;
 	cin >> s;
+	cout<<g.exprecion<<endl;
 	if (g.acepta(s))
 	{
 		cout<<"yes!"<<endl;
