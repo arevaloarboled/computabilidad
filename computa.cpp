@@ -8,6 +8,7 @@ using namespace std;
 class node{
 public:
 	bool mark;
+	bool supermark;
 	string name;
 public:
 	node():mark(false),name(""){}
@@ -16,8 +17,18 @@ public:
 	void marc(){
 		mark=true;
 	}
+
+	void supermarc(){
+		supermark=true;
+	}
+
 	void desmarc(){
 		mark=false;
+	}
+
+	void desmarcs(){
+		mark=false;
+		supermark=false;
 	}
 };
 
@@ -56,15 +67,29 @@ public:
 	vector <node> nodos;
 public:
 	grafo(){
-		int x,y,z;
-		char s;
-		cin>>x>>y;
+		int x;
+		cin>>x;
 		nodos.resize(x);
 		aristas.resize(x);
 		for (int i = 0; i < aristas.size(); ++i)
 		{
 			aristas[i].resize(x);
 		}
+	}
+
+	grafo(int x){
+		nodos.resize(x);
+		aristas.resize(x);
+		for (int i = 0; i < aristas.size(); ++i)
+		{
+			aristas[i].resize(x);
+		}
+	}
+
+	void crear(){
+		int x,y,z;
+		cin>>y;
+		char s;
 		for (int i = 0; i < y; ++i)
 		{
 			cin>>x>>z>>s;
@@ -92,8 +117,23 @@ public:
 			final.push_back(z);
 		}
 	}
+
 	void addarista(int x, int y, char valor){
 		aristas[x][y].colocar(valor);
+	}
+
+	void desmarcgrafo(){
+		for (int i = 0; i < nodos.size(); ++i)
+		{
+			nodos[i].desmarc();
+		}
+	}
+
+	void desmarcsgrafo(){
+		for (int i = 0; i < nodos.size(); ++i)
+		{
+			nodos[i].desmarcs();
+		}
 	}
 
 	void print(){
@@ -103,7 +143,7 @@ public:
 			{
 				for (int k = 0; k < aristas[i][j].valor.size(); ++k)
 				{
-					cout<<aristas[i][j].valor[k]<<" ";	
+					cout<<aristas[i][j].valor[k]<<" ";
 				}
 				cout<<"||";
 			}
@@ -133,6 +173,7 @@ public:
 							//cout<<iterator<<" "<<s.size()<<" "<<j<<" "<<" "<<state<< endl;
 							//if (find(final.begin(),final.end() ,j)!=final.end() && m==s.size())
 							//cout<<"iterator: "<<iterator<<endl;
+							int stmp=state;
 							if (find(final.begin(),final.end() ,j)!=final.end() && m==s.size())
 							{
 								return true;
@@ -140,6 +181,7 @@ public:
 							else if(acepta(s,iterator=m,state=j,init=false)){
 								return true;
 							}
+							state=stmp;
 							//cout<<"iterator: "<<iterator<<endl;
 							iterator--;
 						}
@@ -147,8 +189,10 @@ public:
 						{
 							//cout<<"5"<<endl;
 							int m=iterator;
+							int stmp=state;
 							if(acepta(s,iterator=m,state=j,init=false))
 								return true;
+							state=stmp;
 						}
 					}
 				}
@@ -167,7 +211,7 @@ public:
 				if (find(final.begin(),final.end() ,state) == final.end())
 				{
 					//cout<<"8"<<endl;
-					return false;	
+					return false;
 				}
 				else{
 					//cout<<state<<endl;
@@ -187,15 +231,19 @@ public:
 						{
 							//cout<<"12"<<endl;
 							int m=iterator+1;
+							int stmp=state;
 							if(acepta(s,iterator=m,state=j,init=false))
 								return true;
+							state=stmp;
 						}
 						else if(aristas[state][j].valor[k]=='#')
 						{
 							//cout<<"13"<<endl;
 							int m=iterator;
+							int stmp=state;
 							if(acepta(s,iterator=m,state=j,init=false))
 								return true;
+							state=stmp;
 						}
 
 					}
@@ -204,6 +252,82 @@ public:
 		}
 		//cout<<"14"<<endl;
 		return false;
+	}
+
+	string exprecion(int state=0, bool init=true){
+		string s;
+		if (init)
+		{
+			for (int i = 0; i < inicial.size(); ++i)
+			{
+				state=inicial[i];//escoge uno de los nodos iniciales
+				desmarcgrafo();
+				//cout<<"1"<<endl;
+				for (int j = 0; j <aristas[state].size() ; ++j) //buscar entre las aristas del nodo inicial
+				{
+					//cout<<"2"<<endl;
+					for (int k = 0; k < aristas[state][j].valor.size(); ++k) //busca entre la arista, las posibles sub aristas a probar
+					{
+						//cout<<"3"<<endl;
+						//cout<<iterator<<" "<<s.size()<<" "<<j<<" "<<state<< endl;
+						if (aristas[state][j].valor[k]!='#' && aristas[state][j].valor[k]!=' ') //una arista cumple la condicion, entonces tira un proceso alli
+						{
+							//cout<<"4"<<endl;
+							nodos[state].marc();
+							s+=aristas[state][j].valor[k];
+							if (find(final.begin(), final.end(),state)!=final.end())
+							{
+								s+='+';
+							}
+							int stmp=state;
+							s.append(exprecion(state=j,init=false));
+							state=stmp;
+						}
+					}
+				}
+			}
+		}
+		else{
+			//cout<<"6"<<endl;
+			//cout<<iterator<<" "<<s.size()<<" "<<state<< endl;
+			if (nodos[state].mark==true)
+			{
+				s+='*';
+				return s;
+			}
+			else{
+				for (int j = 0; j <aristas[state].size() ; ++j) //buscar entre las aristas del nodo inicial
+				{
+					//cout<<"10"<<endl;
+					for (int k = 0; k < aristas[state][j].valor.size(); ++k) //busca entre la arista, las posibles sub aristas a probar
+					{
+						//cout<<"11"<<endl;
+						//cout<<iterator<<" "<<s.size()<<" "<<state<< endl;
+						if (aristas[state][j].valor[k]!='#' && aristas[state][j].valor[k]!=' ') //una arista cumple la condicion, entonces tira un proceso alli
+						{
+							//cout<<"4"<<endl;
+							nodos[state].marc();
+							s+=aristas[state][j].valor[k];
+							if (find(final.begin(), final.end(),state)!=final.end())
+							{
+								s+=aristas[state][j].valor[k];
+								s+='+';
+							}
+							int stmp=state;
+							s.append(exprecion(state=j,init=false));
+							state=stmp;
+						}
+					}
+				}
+			}
+		}
+		//s+='+';
+		return s;
+	}
+
+	bool determinista(){
+		grafo gg(nodos.size());
+		
 	}
 };
 
@@ -219,11 +343,12 @@ public:
 int main(int argc, char const *argv[])
 {
 	grafo g;
+	g.crear();
 	g.print();
 	// cout<<"miow"<<endl;
 	string s;
 	cin >> s;
-	cout<<g.exprecion<<endl;
+	cout<<g.exprecion()<<endl;
 	if (g.acepta(s))
 	{
 		cout<<"yes!"<<endl;
