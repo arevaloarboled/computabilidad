@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <sstream>
 using namespace std;
 
 class node{
@@ -325,9 +326,116 @@ public:
 		return s;
 	}
 
+	bool desm(){
+		for (int i = 0; i < nodos; ++i)
+		{
+			if (nodos[i].mark==true)
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
+	vector<int> what(int x,char y){
+		vector<int> v;
+		for (int i = 0; i < aristas[x].size(); ++i)
+		{
+			for (int j = 0; j < aristas[x][i].valor.size(); ++j)
+			{
+				if (aristas[x][i].valor[j]==y)
+				{
+					v.push_back(i);
+				}
+			}
+		}
+		return v;
+	}
+
 	bool determinista(){
 		grafo gg(nodos.size());
-		
+		vector<int> v;
+		vector< vector<int>> dstate;
+		desmarcsgrafo();
+		string s;
+		vector <string> yea;
+		ostringstream temp;
+		//vector< vector< vector<int>>> dtrans;
+
+		for(int j=0;j<nodos.size();++j){
+			nodos[j].marc();
+			for (int i = 0; i < lenguaje.size(); ++i)
+			{
+				v=what(j,lenguaje[i]);
+				if (v.size()!=0)
+				{
+					s="";
+					for (int i = 0; i < v.size(); ++i)
+					{
+						temp<<c[i];
+						s+=temp.str();
+						s+=' ';
+					}
+					s+="* ";
+					temp<<j;
+					s+=tmep.str();
+					s+=' ';
+					
+					if (v.size()>=2)
+					{
+						dstate.push_back(v);
+					}
+				}
+			}
+		}
+		int tmp;
+		for (int i = 0; i < nodos.size(); ++i)
+		{
+			for (int j = 0; j < dstate; ++j)
+			{
+				for (int k = 0; k < dstate[j].size(); ++k)
+				{
+					for (int l = 0; l < aristas[dstate[j][k]].size(); ++l)
+					{
+						for (int m = 0; m < aristas[dstate[j][k]][l].valor.size(); ++m)
+						{
+							for (int n = 0; n < gg.aristas[i][l].valor.size(); ++n)
+							{
+								if (gg.aristas[i][l].valor[n]!=aristas[dstate[j][k]][l].valor[m])
+								{
+									gg.aristas[i][l].valor[n].push_back(aristas[dstate[j][k]][l].valor[m]);
+								}
+							}							
+						}						
+					}
+				}
+			}
+			tmp=i;
+		}
+		for (int i = 0; i <nodos.size() ; ++i)
+		{
+			if (nodos[i].mark!=true)
+			{
+				gg.aristas[tmp]=aristas[i];
+			}
+		}
+
+		//solapan D:
+		for (int i = 0; i < dstate.size(); ++i)
+		{
+			for (int j = 0; j < dstate[i].size(); ++j)
+			{
+				if (find(inicial.begin(), inicial.end(),dstate[i][j])!=inicial.end())
+				{
+					gg.inicial.push_back(i);
+				}
+				if (find(final.begin(), final.end(),dstate[i][j])!=final.end())
+				{
+					gg.inicial.push_back(i);
+				}
+			}
+		}
+		return gg;		
 	}
 };
 
