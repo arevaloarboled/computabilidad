@@ -1,9 +1,12 @@
 #include <cstdlib>
+#include <cstdio>
 #include <string>
 #include <iostream>
 #include <vector>
 #include <algorithm>
 #include <sstream>
+#include <cstring>
+#include <fstream>
 using namespace std;
 
 class node{
@@ -59,16 +62,36 @@ public:
 	/* data */
 };
 
+
+bool desmm(vector <node> v){
+	for (int i = 0; i < v.size(); ++i)
+	{
+		if (v[i].mark==false)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+string to_string(int x){
+	string Result;       
+	ostringstream convert; 
+	convert << x;     
+	Result = convert.str();
+	return Result;
+}
+
 class grafo{
 public:
 	vector <vector<arista> > aristas;
 	vector <int> inicial;
 	vector <int> final;
-	vector<char> lenguaje;
+	vector<char> alfabeto;
 	vector <node> nodos;
 public:
 	grafo(){
-		int x;
+		int x=0;
 		cin>>x;
 		nodos.resize(x);
 		aristas.resize(x);
@@ -89,31 +112,38 @@ public:
 
 	void crear(){
 		int x,y,z;
+		cout<<"numero de aristas";
 		cin>>y;
 		char s;
 		for (int i = 0; i < y; ++i)
 		{
+			cout<<"introdusca arista( origen destino transicion ): ";
 			cin>>x>>z>>s;
 			aristas[x][z].colocar(s);
-			if (find(lenguaje.begin(),lenguaje.end(),s)==lenguaje.end() && s!='#')
+			if (find(alfabeto.begin(),alfabeto.end(),s)==alfabeto.end() && s!='#')
 			{
-				lenguaje.push_back(s);
+				alfabeto.push_back(s);
 			}
 		}
-		cout<<"lenguaje"<<endl;
-		for (int i = 0; i < lenguaje.size(); ++i)
+		cout<<"alfabeto"<<endl;
+		for (int i = 0; i < alfabeto.size(); ++i)
 		{
-			cout<<lenguaje[i];
+			cout<<alfabeto[i];
 		}
 		cout<<endl;
-		cin>>x>>y;
+		cout<<"numero de nodos iniciales: ";
+		cin>>x;
 		for (int i = 0; i < x; ++i)
 		{
+			cout<<"nodo inicial: ";
 			cin>>z;
 			inicial.push_back(z);
 		}
+		cout<<"numero de nodos finales: ";
+		cin>>y;
 		for (int i = 0; i < y; ++i)
 		{
+			cout<<"nodo final: ";
 			cin>>z;
 			final.push_back(z);
 		}
@@ -121,6 +151,25 @@ public:
 
 	void addarista(int x, int y, char valor){
 		aristas[x][y].colocar(valor);
+	}
+	void agregarista(){
+		// cout<<"m"<<endl;
+		vector <arista> v;
+		// cout<<"mm"<<endl;
+		v.resize(nodos.size()+1);
+		// cout<<"mmm"<<endl;
+		for (int i = 0; i < aristas.size(); ++i)
+		{
+			// cout<<"mmmm"<<endl;
+			arista a;
+			aristas[i].push_back(a);
+		}
+		// cout<<"mmmmm"<<endl;
+		aristas.push_back(v);
+		// cout<<"mmmmmm"<<endl;
+		node m;
+		nodos.push_back(m);
+		// cout<<"mmmmmmm"<<endl;
 	}
 
 	void desmarcgrafo(){
@@ -151,6 +200,16 @@ public:
 			cout<<endl;
 			cout<<"======================================================="<<endl;
 		}
+		for (int i = 0; i < inicial.size(); ++i)
+		{
+			cout<<inicial[i]<<"||";
+		}
+		cout<<endl;
+		for (int i = 0; i < final.size(); ++i)
+		{
+			cout<<final[i]<<"||";	
+		}
+		cout<<endl;
 	}
 
 	bool acepta(string s,int iterator=0,int state=0, bool init=true){
@@ -174,7 +233,7 @@ public:
 							//cout<<iterator<<" "<<s.size()<<" "<<j<<" "<<" "<<state<< endl;
 							//if (find(final.begin(),final.end() ,j)!=final.end() && m==s.size())
 							//cout<<"iterator: "<<iterator<<endl;
-							int stmp=state;
+							// int stmp=state;
 							if (find(final.begin(),final.end() ,j)!=final.end() && m==s.size())
 							{
 								return true;
@@ -182,7 +241,7 @@ public:
 							else if(acepta(s,iterator=m,state=j,init=false)){
 								return true;
 							}
-							state=stmp;
+							// state=stmp;
 							//cout<<"iterator: "<<iterator<<endl;
 							iterator--;
 						}
@@ -190,10 +249,10 @@ public:
 						{
 							//cout<<"5"<<endl;
 							int m=iterator;
-							int stmp=state;
+							// int stmp=state;
 							if(acepta(s,iterator=m,state=j,init=false))
 								return true;
-							state=stmp;
+							// state=stmp;
 						}
 					}
 				}
@@ -232,19 +291,19 @@ public:
 						{
 							//cout<<"12"<<endl;
 							int m=iterator+1;
-							int stmp=state;
+							// int stmp=state;
 							if(acepta(s,iterator=m,state=j,init=false))
 								return true;
-							state=stmp;
+							// state=stmp;
 						}
 						else if(aristas[state][j].valor[k]=='#')
 						{
 							//cout<<"13"<<endl;
 							int m=iterator;
-							int stmp=state;
+							// int stmp=state;
 							if(acepta(s,iterator=m,state=j,init=false))
 								return true;
-							state=stmp;
+							// state=stmp;
 						}
 
 					}
@@ -327,14 +386,14 @@ public:
 	}
 
 	bool desm(){
-		for (int i = 0; i < nodos; ++i)
+		for (int i = 0; i < nodos.size(); ++i)
 		{
-			if (nodos[i].mark==true)
+			if (nodos[i].mark==false)
 			{
-				return false;
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 
 	vector<int> what(int x,char y){
@@ -352,92 +411,366 @@ public:
 		return v;
 	}
 
-	bool determinista(){
-		grafo gg(nodos.size());
+	vector <int> whate(int x){
 		vector<int> v;
-		vector< vector<int>> dstate;
-		desmarcsgrafo();
-		string s;
-		vector <string> yea;
-		ostringstream temp;
-		//vector< vector< vector<int>>> dtrans;
-
-		for(int j=0;j<nodos.size();++j){
-			nodos[j].marc();
-			for (int i = 0; i < lenguaje.size(); ++i)
+		for (int i = 0; i < aristas[x].size(); ++i)
+		{
+			for (int j = 0; j < aristas[x][i].valor.size(); ++j)
 			{
-				v=what(j,lenguaje[i]);
-				if (v.size()!=0)
+				if (aristas[x][i].valor[j]=='#')
 				{
-					s="";
-					for (int i = 0; i < v.size(); ++i)
-					{
-						temp<<c[i];
-						s+=temp.str();
-						s+=' ';
-					}
-					s+="* ";
-					temp<<j;
-					s+=tmep.str();
-					s+=' ';
-					
-					if (v.size()>=2)
-					{
-						dstate.push_back(v);
-					}
+					v.push_back(i);
 				}
 			}
 		}
-		int tmp;
-		for (int i = 0; i < nodos.size(); ++i)
+		return v;
+	}
+
+	grafo determinista(){
+		grafo gg(1);
+		vector < vector<int> > v;
+		vector <int> tmp;
+		vector <int> tmpp;
+		gg.inicial.push_back(0);
+		gg.alfabeto=alfabeto;
+		bool o=false;
+		// cout<<"1"<<endl;
+		for (int i = 0; i < inicial.size(); ++i)
 		{
-			for (int j = 0; j < dstate; ++j)
+			tmp.push_back(inicial[i]);
+			tmpp=whate(inicial[i]);
+			// cout<<"2"<<endl;
+			for (int j = 0; j < tmpp.size() ; ++j)
 			{
-				for (int k = 0; k < dstate[j].size(); ++k)
+				// cout<<"3"<<endl;
+				tmp.push_back(tmpp[j]);
+			}
+		}
+		v.push_back(tmp);
+		tmp.clear();
+		// cout<<"4"<<endl;
+		for (int i = 0; i < gg.nodos.size(); ++i)
+		{
+			// cout<<"5"<<endl;
+			for (int k = 0; k < v[i].size(); ++k)
+			{
+				tmpp=whate(v[i][k]);
+				for (int w = 0; w < tmpp.size() ; ++w)
 				{
-					for (int l = 0; l < aristas[dstate[j][k]].size(); ++l)
+					tmp.push_back(tmpp[w]);
+					o=true;
+					// cout<<"10"<<endl;
+				}
+			}
+			// cout<<"9"<<endl;
+			for (int j = 0; j < alfabeto.size(); ++j)
+			{
+				// cout<<"6"<<endl;
+				for (int k = 0; k < v[i].size(); ++k)
+				{
+					tmpp=what(v[i][k],alfabeto[j]);
+					// cout<<"7"<<endl;
+					for (int w = 0; w < tmpp.size(); ++w)
 					{
-						for (int m = 0; m < aristas[dstate[j][k]][l].valor.size(); ++m)
-						{
-							for (int n = 0; n < gg.aristas[i][l].valor.size(); ++n)
+						// cout<<"8"<<endl;
+						tmp.push_back(tmpp[w]);
+					}
+					// tmpp=whate(v[i][k]);
+					// // cout<<"9"<<endl;
+					// for (int w = 0; w < tmpp.size() ; ++w)
+					// {
+					// 	tmp.push_back(tmpp[w]);
+					// 	// cout<<"10"<<endl;
+					// }
+				}
+				if (tmp.size()>0)
+				{
+					// cout<<"11"<<endl;
+					int h=0;
+					bool b=false;
+					int q;
+					for (int c = 0; c < v.size(); ++c)
+					{
+							for (int w = 0; w < v[c].size(); ++w)
 							{
-								if (gg.aristas[i][l].valor[n]!=aristas[dstate[j][k]][l].valor[m])
+								for (int d = 0; d < tmp.size(); ++d)
 								{
-									gg.aristas[i][l].valor[n].push_back(aristas[dstate[j][k]][l].valor[m]);
+									// cout<<"asdfsadf: "<<v[c][w]<<" "<<tmp[d]<<endl;;
+									if (find(v[c].begin(), v[c].end(),tmp[d])!=v[c].end())
+									if(v[c][w]==tmp[d])
+									{
+										h++;
+										// cout<<"snfsjf "<<h<<endl;
+										break;
+									}	
 								}
-							}							
-						}						
+							}
+							if (h==tmp.size() && h==v[c].size())
+							{
+								b=true;
+								q=c;
+								break;
+							}	
+							else{
+								h=0;
+							}
+					}
+					// if (find(v.begin(), v.end(),tmp)==v.end())
+					if(!b)
+					{
+						// cout<<"12"<<endl;
+						// node m;
+						// gg.nodos.push_back(m);
+						gg.agregarista();
+						// cout<<"nodos: "<<gg.aristas.size()<<" "<<gg.nodos.size()<<endl;
+						v.push_back(tmp);
+						// cout<<"por aki"<<endl;
+						gg.addarista(i,gg.nodos.size()-1,alfabeto[j]);
+						// cout<<":D"<<endl;
+					}
+					else{
+						// cout<<"13"<<endl;
+						if (o)
+						{
+							gg.addarista(i,q+1,alfabeto[j]);
+							o=false;
+						}
+						else{
+							gg.addarista(i,q,alfabeto[j]);							
+						}
+						// for (int l = 0; l < v.size(); ++l)
+						// {
+						// 			// cout<<"14"<<endl;
+						// 	// int h=0;
+						// 	// bool b=false;
+						// 	// // for (int c = 0; c < v.size(); ++c)
+						// 	// // {
+						// 	// 		for (int w = 0; w < v[l].size(); ++w)
+						// 	// 		{
+						// 	// 			for (int d = 0; d < tmp.size(); ++d)
+						// 	// 			{
+						// 	// 				// cout<<"asdfsadf: "<<v[c][w]<<" "<<tmp[d]<<endl;;
+						// 	// 				// if (find(v[c].begin(), v[c].end(),tmp[d])!=v[c].end())
+						// 	// 				if(v[l][w]==tmp[d])
+						// 	// 				{
+						// 	// 					h++;
+						// 	// 					// cout<<"snfsjf "<<h<<endl;
+						// 	// 					break;
+						// 	// 				}	
+						// 	// 			}
+						// 	// 		}
+						// 	// 		if (h==tmp.size() && h==v[l].size())
+						// 	// 		{
+						// 	// 			b=true;
+						// 	// 			// break;
+						// 	// 		}	
+						// 	// 		else{
+						// 	// 			h=0;
+						// 	// 		}
+						// 	// // }
+						// 	// if (v[l]==tmp)
+						// 	if(b)
+						// 	{
+						// 		// cout<<"lol"<<endl;
+						// 		// cout<<"size: "<<v.size()<<" "<<gg.aristas.size()<<endl;
+						// 		gg.addarista(i,l,alfabeto[j]);			
+						// 		// cout<<"15"<<endl;
+						// 		break;
+						// 	}
+						// }
+					}
+					tmp.clear();
+				}
+			}
+		}
+		// cout<<"16"<<endl;
+		for (int i = 0; i < v.size(); ++i)
+				{
+					// cout<<"17"<<endl;
+					for (int j = 0; j <v[i].size() ; ++j)
+					{
+						// cout<<"18"<<endl;
+						if (find(final.begin(), final.end(),v[i][j])!=final.end())
+						{
+							gg.final.push_back(i);
+							// cout<<"19"<<endl;
+							break;
+						}
 					}
 				}
-			}
-			tmp=i;
-		}
-		for (int i = 0; i <nodos.size() ; ++i)
-		{
-			if (nodos[i].mark!=true)
-			{
-				gg.aristas[tmp]=aristas[i];
-			}
-		}
-
-		//solapan D:
-		for (int i = 0; i < dstate.size(); ++i)
-		{
-			for (int j = 0; j < dstate[i].size(); ++j)
-			{
-				if (find(inicial.begin(), inicial.end(),dstate[i][j])!=inicial.end())
-				{
-					gg.inicial.push_back(i);
-				}
-				if (find(final.begin(), final.end(),dstate[i][j])!=final.end())
-				{
-					gg.inicial.push_back(i);
-				}
-			}
-		}
+				// cout<<"miow"<<endl;
 		return gg;		
 	}
+
+	grafo reverso(){
+		vector <vector<arista> > arist;
+		vector <int> ini;
+		vector <int> fin;
+		ini=final;
+		fin=inicial;
+		arist.resize(nodos.size());
+		for (int i = 0; i < arist.size(); ++i)
+		{
+			arist[i].resize(nodos.size());
+		}
+		for (int i = 0; i < arist.size(); ++i)
+		{
+			for (int j = 0; j <arist.size() ; ++j)
+			{
+				for (int k = 0; k <aristas[i][j].valor.size() ; ++k)
+				{
+					arist[j][i].colocar(aristas[i][j].valor[k]);
+		// cout<<"asdfasfasfasf"<<endl;
+				}
+			}
+		}
+		grafo gg(nodos.size());
+		// cout<<"alfabet! ";
+		// for (int i = 0; i < alfabeto.size(); ++i)
+		// {
+		// 	cout<<alfabeto[i];
+		// }
+		// cout<<endl;
+		gg.alfabeto=alfabeto;
+		gg.nodos=nodos;
+		gg.inicial=ini;
+		// cout<<"miow"<<endl;
+		gg.final=fin;
+		gg.aristas=arist;
+		return gg;
+	}
+
+	void complemento(){
+		vector <int> v;
+		for (int i = 0; i < nodos.size(); ++i)
+		{
+			if (find(final.begin(), final.end(),i)==final.end())
+			{
+				v.push_back(i);
+			}
+		}
+		final=v;
+	}
+
+	void expor(){
+		string expor;
+		expor += "digraph g{ \n rankdir=LR; \n";
+		for (int i = 0; i < nodos.size(); ++i)
+		 {
+		 	if (find(inicial.begin(), inicial.end(),i)!=inicial.end() && find(final.begin(), final.end(),i)!=final.end())
+		 	{
+		 		expor += "node [shape = doublecircle, label=\" q";
+		 		expor += to_string(i);
+		 		expor += "\" ] q";
+				expor += to_string(i);
+				expor += ";";
+		 		expor += "node [shape = point ] qq";
+		 		expor += to_string(i);
+		 		expor += ";";
+		 		expor += "\n qq";
+		 		expor += to_string(i);
+		 		expor += " -> q";
+		 		expor += to_string(i);
+		 		expor += "; \n";
+		 	}
+		 	else if (find(inicial.begin(), inicial.end(),i)!=inicial.end())
+		 	{
+		 		expor += "node [shape = circle, label=\" q";
+		 		expor += to_string(i);
+		 		expor += "\" ] q";
+				expor += to_string(i);
+				expor += ";\n";
+		 		expor += "node [shape = point ] qq";
+		 		expor += to_string(i);
+		 		expor += ";";
+		 		expor += "\n qq";
+		 		expor += to_string(i);
+		 		expor += " -> q";
+		 		expor += to_string(i);
+		 		expor += ";\n";
+		 	}
+		 	else if (find(final.begin(), final.end(),i)!=final.end())
+		 	{
+		 		expor += "node [shape = doublecircle, label=\" q";
+		 		expor += to_string(i);
+		 		expor += "\" ] q";
+				expor += to_string(i);
+				expor += ";\n";
+		 	}
+		 	else{
+		 		expor += "node [shape = circle, label=\" q";
+		 		expor += to_string(i);
+		 		expor += "\" ] q";
+				expor += to_string(i);
+				expor += ";\n";
+		 	}
+		 } 
+
+		 for (int i = 0; i < aristas.size(); ++i)
+		 {
+		 	for (int j = 0; j < aristas.size(); ++j)
+		 	{
+		 		for (int k = 0; k < aristas[i][j].valor.size(); ++k)
+		 		{
+		 			if (aristas[i][j].valor[k]!=' ')
+			 		{
+			 			expor += "q";
+			 			expor += to_string(i);
+			 			expor += " -> q";
+			 			expor += to_string(j);
+			 			expor += " [ label = \"";
+			 			expor += aristas[i][j].valor[k];
+			 			expor += " \" ];\n";
+			 		}
+		 		}
+		 	}
+		 }
+		 expor += " }";
+		 ofstream output;
+		 output.open("img.dot");
+		 output << expor;
+		 output.close();
+		 system("dot -Tpng img.dot -o img.png");
+	}
+
 };
+
+grafo minimizacion(grafo g){
+	// cout<<"asdf"<<endl;
+	g=g.reverso();
+	g.print();
+	cout<<"step 1"<<endl;
+	g=g.determinista();
+	g.print();
+	cout<<"step 2"<<endl;
+	g=g.reverso();
+	g.print();
+	cout<<"step 3"<<endl;
+	g=g.determinista();
+	return g;
+}
+
+	// grafo union(grafo g){
+	// 	grafo gg(2+nodos.siz()+g.nodos.size());
+	// 	gg.addarista(0,1,'#');
+	// 	int n=1;
+	// 	for (int i = 0; i < nodos.size(); ++i)
+	// 	{
+	// 		for (int j = 0; j < nodos.size(); ++j)
+	// 		{
+	// 			gg.aristas[i+n][j+n]=aristas[i][j];
+	// 		}
+	// 	}
+	// 	n=n+nodos.size();
+	// 	for (int i = 0; i < nodos.size(); ++i)
+	// 	{
+	// 		for (int j = 0; j < nodos.size(); ++j)
+	// 		{
+	// 			gg.aristas[i+n][j+n]=g.aristas[i][j];
+	// 		}
+	// 	}
+	// 	return gg;
+	// }
 
 // class automata
 // {
@@ -450,19 +783,71 @@ public:
 
 int main(int argc, char const *argv[])
 {
-	grafo g;
-	g.crear();
-	g.print();
-	// cout<<"miow"<<endl;
-	string s;
-	cin >> s;
-	cout<<g.exprecion()<<endl;
-	if (g.acepta(s))
-	{
-		cout<<"yes!"<<endl;
+	int a,b,c;
+	grafo g(0);
+	while(1){
+		while(1){
+			cout<<"¿que desea hacer?"<<endl;
+			cout<<"1.crear automata"<<endl;
+			cout<<"2.cargar automata"<<endl;
+			cin>>a;
+			if (a==1)
+			{
+				cout<<"numero de estados: ";
+				cin>>b;
+				grafo gg(b);
+				g=gg;
+				g.crear();
+				break;
+			}
+			if (a==2)
+			{
+				cout<<"cual desea cargar?"<<endl;
+				system("ls >> tmp.txt");
+				// ofstream output;
+				//  output.open("tmp.txt");
+				FILE *output;
+				output=fopen("tmp.txt","r");
+				 string line;
+				 vector <string> vs;
+				 // while(getline(output,line)){
+				 getline(output,line);
+				 	if (find(line.begin(), line.end(),".puj")!=line.end())
+				 	{
+				 		vs.push_back(line);
+				 		cout<<vs.size()<<") "<<line<<endl;
+				 	}
+				 // }
+				 cin>>c;
+				 cout<<vs[c]<<endl;
+			}
+		}
 	}
-	else{
-		cout<<"no D:"<<endl;
-	}
+	// grafo g;
+	// g.crear();
+	// g.print();
+	// // // cout<<"miow"<<endl;
+	// string s;
+	// cin >> s;
+	// if (g.acepta(s))
+	// {
+	// 	cout<<"yes!"<<endl;
+	// }
+	// else{
+	// 	cout<<"no D:"<<endl;
+	// }
+	// g=g.determinista();
+	// g.print();
+	// // g=minimizacion(g);
+	// // g=g.determinista();
+	// g.print();
+	// // if (g.acepta(s))
+	// // {
+	// // 	cout<<"yes!"<<endl;
+	// // }
+	// // else{
+	// // 	cout<<"no D:"<<endl;
+	// // }
+	// g.expor();
 	return 0;
 }
